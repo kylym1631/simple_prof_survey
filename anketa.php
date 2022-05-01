@@ -29,6 +29,10 @@ foreach ($pollAnswers as $h) {
 $verticalId= array_unique($verticalId);
 $pollData = $_POST;
 $pollAnswers = array_chunk($pollAnswers,10,true);
+//echo "<pre>";
+//print_r($pollAnswers);
+//echo "</pre>";
+//die();
 ?>
 <div class="container">
     <h4>Выберите профессию</h4>
@@ -40,11 +44,6 @@ $pollAnswers = array_chunk($pollAnswers,10,true);
 </div>
 <div id="progress"><span></span>% сделано</div>
     <?php
-    if (!empty($_POST))
-    {
-        echo '<p class="text-danger">Пожалуйста Ответьте на все вопросы</p>';
-
-    }
     $questionNumbers=0;
     ?>
 <form action="anketa_func.php" method="post"class=" my-5" id="form_calc" >
@@ -57,76 +56,61 @@ $pollAnswers = array_chunk($pollAnswers,10,true);
     }
     ?>
     <div class="questions" >
-        <?php foreach($pollAnswers as $kp =>$vp) :?>
-            <?php
-            echo "<div>";
-            foreach ($vp as $kq=>$vq) :?>
-                <?php $questionNumbers++;?>
-
-
-
-
+        <?php echo "
+        <div>";
+                foreach ($pollAnswers[0] as $kq=>$vq) :?>
+                    <?php $questionNumbers++;?>
                     <div style="" class="bg-light p-1 my-2 rounded">
-
-<table style="margin: 5px 0 0 5px ;"><tr><td>
-     <?php print $vq['poll_id']. "\n"; ?>
-
- </td><td>
-                         <input type="radio"   progress="1" id="poll_<?php print $vq['poll_id']; ?>_a" name="poll_<?php print $vq['poll_id']; ?>" value="1">
-                        <label style="cursor: pointer" for="poll_<?php print $vq['poll_id']; ?>_a"><?php print $vq['option_1']. "\n"; ?></label>
-          </td></tr><tr><td></td><td>
-
-                        <input type="radio" progress="1" id="poll_<?php print $vq['poll_id']; ?>_b" name="poll_<?php print $vq['poll_id']; ?>"  value="2" >
-                        <label style="cursor: pointer" for="poll_<?php print $vq['poll_id']; ?>_b"><?php print $vq['option_2']. "\n"; ?></label>
-                    </td></tr>
-</table>
+                        <table style="margin: 5px 0 0 5px ;"><tr><td>
+                             <?php print $vq['poll_id']. "\n"; ?>
+                             </td><td>
+                             <input type="radio"   progress="1" id="poll_<?php print $vq['poll_id']; ?>_a" name="poll_<?php print $vq['poll_id']; ?>" value="1" required>
+                             <label style="cursor: pointer" for="poll_<?php print $vq['poll_id']; ?>_a"><?php print $vq['option_1']. "\n"; ?></label>
+                             </td></tr><tr><td></td><td>
+                             <input type="radio" progress="1" id="poll_<?php print $vq['poll_id']; ?>_b" name="poll_<?php print $vq['poll_id']; ?>"  value="2" required>
+                             <label style="cursor: pointer" for="poll_<?php print $vq['poll_id']; ?>_b"><?php print $vq['option_2']. "\n"; ?></label>
+                             </td></tr>
+                        </table>
                         <br>
-
                     </div>
-            <?php endforeach;
-
-        echo "<br>
-            </div>";
-            endforeach; ?>
-
+                <?php endforeach;
+            echo "<br>
+        </div>"; ?>
     </div>
     <div class="container">
-    <button type="button" style="float: left;" class="prev float-left">Предыдущие</button>
-    <button type="button" style="float: right" class="next float-right" id="next-button" class=" btn-primary">Следующие</button>
-    <br>
-    <input style="display: none ;margin: auto;"   type="submit"  class="button btn-choose btn-primary" value="Отправить форму">
         <?php
-         if (count($pollAnswers) <=1){
-            echo ' <input style="margin: auto;"   type="submit"  class="button btn-choose btn-primary" value="Отправить форму">';
-
-         }
+            if (count($_POST)<90 || $questionNumbers==0){
+                echo '    <button type="submit" style="margin: auto;float: right" class="next" id="next-button" >Следующие</button>';
+            }
         ?>
-</div>
-  </form>
+        <br>
+        <input style="display: none ;margin: auto;" id="form-submit"   type="submit"  class="button btn-choose btn-primary" value="Отправить форму">
+    </div>
+</form>
 
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="slick/slick.js"></script>
 <script>
-    $('.questions').slick({
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows:true,
-        prevArrow: $('.prev'),
-        nextArrow: $('.next'),
-        infinite:false,
-
-    });
-
-
-    $(this).on('afterChange', function(event, slick, currentSlide) {
-        console.log(slick, currentSlide);
-        if (slick.$slides.length-1 == currentSlide) {
-            $(".btn-choose").css("display", "block");
-
-        }
-    })
+    // $('.questions').slick({
+    //     slidesToShow: 1,
+    //     slidesToScroll: 1,
+    //     arrows:true,
+    //     prevArrow: $('.prev'),
+    //     nextArrow: $('.next'),
+    //     infinite:false,
+    //
+    // });
+    //
+    //
+    // $(this).on('afterChange', function(event, slick, currentSlide) {
+    //     console.log(slick, currentSlide);
+    //     if (slick.$slides.length-1 == currentSlide) {
+    //         $(".btn-choose").css("display", "block");
+    //
+    //     }
+    // })
 
     jQuery(document).ready(function ($) {
 
@@ -142,7 +126,7 @@ $pollAnswers = array_chunk($pollAnswers,10,true);
     {
         var totalProgress   = <?php
             if (!empty($_POST)) {
-                echo 100-$questionNumbers;
+                echo 100-count($pollAnswers)*10;
             }else{
                 echo 0;
             }
@@ -153,6 +137,10 @@ $pollAnswers = array_chunk($pollAnswers,10,true);
             if( $(this).is(':checked') ) {
                 values.push($(this).attr('progress'));
                 totalProgress += parseInt($(this).attr('progress'));
+                if (totalProgress ==100){
+                    $("#form-submit").css('display','block');
+                    // $("#next-button").css('display','none');
+                }
             }
         });
 
