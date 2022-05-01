@@ -1,0 +1,7 @@
+input.hidden{
+   display: none;
+}
+.slick-disabled {
+   opacity: 0;
+   pointer-events:none;
+}
